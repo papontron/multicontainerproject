@@ -11,4 +11,4 @@ RUN npm run build
 FROM nginx
 EXPOSE 3000
 COPY --from=builder ./home/node/app/build ./usr/share/nginx/html
-COPY ./client/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
