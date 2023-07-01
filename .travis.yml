@@ -1,0 +1,17 @@
+#we are telling travis to run tests, build images and upload them to docker hub
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t papontron/react-test -f ./client/Dockerfile.dev ./client
+script:
+  - docker run -e CI=true papontron/react-test npm test
+after_success:
+  #construimos las imagenes
+  - docker build -t papontron/multicontainerproject-client ./client
+  - docker build -t papontron/multicontainerproject-api ./server
+  - docker build -t papontron/multicontainerproject-worker ./worker
+  - docker build -t papontron/multicontainerproject-nginx ./nginx
+  #log in to the docker cli
+  -

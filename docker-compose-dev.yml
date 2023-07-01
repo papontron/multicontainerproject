@@ -1,23 +1,28 @@
 version: '3.9'
 services:
-  redis:
-    image: redis
+  nninx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3050:80
+    restart: always
+
   postgres:
-    image: postgres
+    image: postgres:latest
     environment:
       - POSTGRES_PASSWORD=postgres_password
-  nginx:
-    image: nginx
-    build: 
-      context: ./nginx
-      dockerfile: Dockerfile
-    depends_on:
-      - api
-      - client
+  redis:
+    image: redis:latest
   api:
-    build: 
+    build:
       context: ./server
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    ports:
+      - 5000:5000
+    volumes:
+      - /app/node_modules
+      - ./server:/app
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -32,17 +37,26 @@ services:
   worker:
     build: 
       context: ./worker
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
     depends_on:
       - redis
   client:
     build: 
       context: ./client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
     depends_on:
       - api
     environment:
       - WDS_SOCKET_PORT=0
+    volumes:
+      - /home/node/app/node_modules
+      - ./client:/home/node/app
+  
