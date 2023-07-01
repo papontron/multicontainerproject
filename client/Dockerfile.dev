@@ -1,0 +1,8 @@
+FROM node:16
+USER node
+RUN mkdir /home/node/app && chown node:node /home/node/app
+WORKDIR /home/node/app
+COPY --chown=node:node package.json .
+RUN npm i
+COPY . .
+CMD [ "npm","start" ]
