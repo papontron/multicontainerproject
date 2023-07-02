@@ -20,14 +20,14 @@ after_success:
   - docker push papontron/multicontainerproject-api 
   - docker push papontron/multicontainerproject-worker 
   - docker push papontron/multicontainerproject-nginx
-  deploy:
-    provider: elasticbeanstalk
-    region: 'us-east-1'
-    app: 'multicontainerproject'
-    env: 'Multicontainerproject-env'
-    bucket_name: 'elasticbeanstalk-us-east-1-169149745112'
-    bucket_path: 'multicontainerproject' #poner un nombre cualquiera
-    on:
-      branch: main
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-1'
+  app: 'multicontainerproject'
+  env: 'Multicontainerproject-env'
+  bucket_name: 'elasticbeanstalk-us-east-1-169149745112'
+  bucket_path: 'multicontainerproject' #poner un nombre cualquiera
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
