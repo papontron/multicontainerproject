@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: api
+  template:
+    metadata: 
+      labels:
+        component: api
+    spec:
+      containers:
+        - name: api
+          image: papontron/multicontainerproject-api
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              value: redis-clusterip
+            - name: PGHOST
+              value: postgres-clusterip
+            - name: REDIS_PORT
+              value: "6379"
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              value: postgres
+            - name: PGDATABASE
+              value: postgres
+            - name: PGPASSWORD # <- api index.js
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword #<- the name give when created the secret object in kubectl
+                  key: PGPASSWORD #<- the key associated to its value
+
+

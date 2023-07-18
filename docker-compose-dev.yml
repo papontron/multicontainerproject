@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  nninx:
+  nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile.dev
