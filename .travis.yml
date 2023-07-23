@@ -1,33 +1,47 @@
-#we are telling travis to run tests, build images and upload them to docker hub
+# ##aws docker upload
+# #we are telling travis to run tests, build images and upload them to docker hub
+# sudo: required
+# services:
+#   - docker
+
+# before_install:
+#   - docker build -t papontron/react-test -f ./client/Dockerfile.dev ./client
+# script:
+#   - docker run -e CI=true papontron/react-test npm test
+# after_success:
+#   #construimos las imagenes
+#   - docker build -t papontron/multicontainerproject-client ./client
+#   - docker build -t papontron/multicontainerproject-api ./server
+#   - docker build -t papontron/multicontainerproject-worker ./worker
+#   - docker build -t papontron/multicontainerproject-nginx ./nginx
+#   #log in to the docker cli
+#   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+#   #push the images to docker hub
+#   - docker push papontron/multicontainerproject-client 
+#   - docker push papontron/multicontainerproject-api 
+#   - docker push papontron/multicontainerproject-worker 
+#   - docker push papontron/multicontainerproject-nginx
+# deploy:
+#   provider: elasticbeanstalk
+#   region: 'us-east-1'
+#   app: 'multicontainerproject'
+#   env: 'Multicontainerproject-env'
+#   bucket_name: 'elasticbeanstalk-us-east-1-169149745112'
+#   bucket_path: 'multicontainerproject' #poner un nombre cualquiera
+#   on:
+#     branch: main
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
+
+## ###########################google could upload####################
 sudo: required
 services:
   - docker
-
 before_install:
-  - docker build -t papontron/react-test -f ./client/Dockerfile.dev ./client
-script:
-  - docker run -e CI=true papontron/react-test npm test
-after_success:
-  #construimos las imagenes
-  - docker build -t papontron/multicontainerproject-client ./client
-  - docker build -t papontron/multicontainerproject-api ./server
-  - docker build -t papontron/multicontainerproject-worker ./worker
-  - docker build -t papontron/multicontainerproject-nginx ./nginx
-  #log in to the docker cli
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  #push the images to docker hub
-  - docker push papontron/multicontainerproject-client 
-  - docker push papontron/multicontainerproject-api 
-  - docker push papontron/multicontainerproject-worker 
-  - docker push papontron/multicontainerproject-nginx
-deploy:
-  provider: elasticbeanstalk
-  region: 'us-east-1'
-  app: 'multicontainerproject'
-  env: 'Multicontainerproject-env'
-  bucket_name: 'elasticbeanstalk-us-east-1-169149745112'
-  bucket_path: 'multicontainerproject' #poner un nombre cualquiera
-  on:
-    branch: main
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+  - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null; #downloads and install google sdk
+  - source $HOME/google-cloud-sdk/path.bash.inc #sets up the config of sdk in ur local machine
+  - gcloud components update kubectl #installs kubectl in travis
+  - gcloud auth activate-service-account --key-file service-account.json #auth to google specified in the file service-account.json
+
+
